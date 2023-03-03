@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 
 // Msal imports
 import { MsalAuthenticationTemplate, useMsal } from "@azure/msal-react";
-import { InteractionStatus, InteractionType, InteractionRequiredAuthError } from "@azure/msal-browser";
+import {
+  InteractionStatus,
+  InteractionType,
+  InteractionRequiredAuthError,
+} from "@azure/msal-browser";
 import { loginRequest } from "../authConfig";
 
 // Sample app imports
@@ -15,42 +19,42 @@ import { callMsGraph } from "../utils/MsGraphApiCall";
 import Paper from "@mui/material/Paper";
 
 const ProfileContent = () => {
-    const { instance, inProgress } = useMsal();
-    const [graphData, setGraphData] = useState(null);
+  const { instance, inProgress } = useMsal();
+  const [graphData, setGraphData] = useState(null);
 
-    useEffect(() => {
-        if (!graphData && inProgress === InteractionStatus.None) {
-            callMsGraph().then(response => setGraphData(response)).catch((e) => {
-                if (e instanceof InteractionRequiredAuthError) {
-                    instance.acquireTokenRedirect({
-                        ...loginRequest,
-                        account: instance.getActiveAccount()
-                    });
-                }
+  useEffect(() => {
+    if (!graphData && inProgress === InteractionStatus.None) {
+      callMsGraph()
+        .then((response) => setGraphData(response))
+        .catch((e) => {
+          if (e instanceof InteractionRequiredAuthError) {
+            instance.acquireTokenRedirect({
+              ...loginRequest,
+              account: instance.getActiveAccount(),
             });
-        }
-    }, [inProgress, graphData, instance]);
-  
-    return (
-        <Paper>
-            { graphData ? <ProfileData graphData={graphData} /> : null }
-        </Paper>
-    );
+          }
+        });
+    }
+  }, [inProgress, graphData, instance]);
+
+  return (
+    <Paper>{graphData ? <ProfileData graphData={graphData} /> : null}</Paper>
+  );
 };
 
 export function Profile() {
-    const authRequest = {
-        ...loginRequest
-    };
+  const authRequest = {
+    ...loginRequest,
+  };
 
-    return (
-        <MsalAuthenticationTemplate 
-            interactionType={InteractionType.Redirect} 
-            authenticationRequest={authRequest} 
-            errorComponent={ErrorComponent} 
-            loadingComponent={Loading}
-        >
-            <ProfileContent />
-        </MsalAuthenticationTemplate>
-      )
-};
+  return (
+    <MsalAuthenticationTemplate
+      interactionType={InteractionType.Redirect}
+      authenticationRequest={authRequest}
+      errorComponent={ErrorComponent}
+      loadingComponent={Loading}
+    >
+      <ProfileContent />
+    </MsalAuthenticationTemplate>
+  );
+}

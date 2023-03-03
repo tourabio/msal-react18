@@ -15,13 +15,9 @@ const isFirefox = firefox > 0; // Only needed if you need to support the redirec
 export const msalConfig = {
   auth: {
     clientId: process.env.REACT_APP_CLIENT_ID,
-    clientSecret: {
-      id: process.env.REACT_APP_CLIENT_SECRET_ID,
-      secret: process.env.REACT_APP_CLIENT_SECRET,
-    },
     authority: `https://login.microsoftonline.com/${process.env.REACT_APP_TENANT_ID}`,
-    redirectUri: "http://localhost",
-    postLogoutRedirectUri: "/",
+    redirectUri: "http://localhost:3000",
+    clientSecret: process.env.REACT_APP_CLIENT_SECRET,
   },
   cache: {
     cacheLocation: "localStorage",
@@ -56,10 +52,13 @@ export const msalConfig = {
 
 // Add here scopes for id token to be used at MS Identity Platform endpoints.
 export const loginRequest = {
-  scopes: ["User.Read"],
+  scopes: ["api://f3ee8b48-9393-4017-b87c-660b9a39bd1a/User.Read", "openid"],
+};
+export const loginRequestForMicrosoftGraph = {
+  scopes: ["profile", "User.Read"],
 };
 
 // Add here the endpoints for MS Graph API services you would like to use.
 export const graphConfig = {
-  graphMeEndpoint: "https://graph.microsoft-ppe.com/v1.0/me",
+  graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
 };
